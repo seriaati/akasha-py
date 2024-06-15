@@ -1,2 +1,3 @@
 # akasha-py
- Async API wrapper for akasha.cv written in Python
+
+ Async API wrapper for [akasha.cv](https://akasha.cv/) written in Python
