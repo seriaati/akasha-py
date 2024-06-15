@@ -3,9 +3,7 @@ from typing import Any, Final, Self
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 
-from akasha.models.leaderboard import Leaderboard
-
-from .models import UserCalc
+from .models import Leaderboard, UserCalc
 
 __all__ = ("AkashaAPI",)
 
