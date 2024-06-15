@@ -2,6 +2,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+__all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
+
 
 class LeaderboardCalc(BaseModel):
     id: str
