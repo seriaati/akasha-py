@@ -94,3 +94,11 @@ class AkashaAPI:
             use_cache=use_cache,
         )
         return [Leaderboard(**lb) for lb in data]
+
+    async def refresh(self, uid: int) -> None:
+        """Refresh the Enka data of a player.
+
+        Args:
+            uid (int): The UID of the player.
+        """
+        await self._request(f"refresh/{uid}", use_cache=False)
