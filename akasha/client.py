@@ -3,6 +3,8 @@ from typing import Any, Final, Self
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 
+from akasha.errors import DESC_TO_ERROR, AkashaAPIError
+
 from .models import Leaderboard, UserCalc
 
 __all__ = ("AkashaAPI",)
@@ -38,6 +40,19 @@ class AkashaAPI:
             return
         await self._session.close()
 
+    def _raise_for_error(self, data: dict[str, Any]) -> None:
+        if (error := data.get("error")) is not None:
+            if (message := data.get("message")) is not None:
+                title = message
+                description = error
+            else:
+                title = error["title"]
+                description = error["description"]
+
+            if (error_class := DESC_TO_ERROR.get(description)) is not None:
+                raise error_class(title, description)
+            raise AkashaAPIError(title, description)
+
     async def _request(
         self, endpoint: str, use_cache: bool, *, params: dict[str, Any] | None = None
     ) -> Any:
@@ -57,7 +72,9 @@ class AkashaAPI:
                 response.raise_for_status()
                 data = await response.json()
 
-        return data["data"]
+        data = data["data"]
+        self._raise_for_error(data)
+        return data
 
     async def get_calculations_for_user(
         self, uid: int, *, use_cache: bool = True
@@ -95,10 +112,18 @@ class AkashaAPI:
         )
         return [Leaderboard(**lb) for lb in data]
 
-    async def refresh(self, uid: int) -> None:
+    async def refresh_user(self, uid: int) -> None:
         """Refresh the Enka data of a player.
 
         Args:
             uid (int): The UID of the player.
         """
-        await self._request(f"refresh/{uid}", use_cache=False)
+        await self._request(f"user/refresh/{uid}", use_cache=False)
+
+    async def get_user(self, uid: int) -> None:
+        """Get the user data.
+
+        Args:
+            uid (int): The UID of the player.
+        """
+        await self._request(f"user/{uid}", use_cache=True)
