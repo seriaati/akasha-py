@@ -120,7 +120,7 @@ class AkashaAPI:
         """
         await self._request(f"user/refresh/{uid}", use_cache=False)
 
-    async def get_user(self, uid: int, *, use_cache: bool) -> None:
+    async def get_user(self, uid: int, *, use_cache: bool = True) -> None:
         """Get the user data.
 
         Args:
