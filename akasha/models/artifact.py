@@ -28,6 +28,11 @@ class Artifact(BaseModel):
     def __transform_substats(cls, v: dict[str, float]) -> list[ArtifactStat]:
         return [ArtifactStat(name=name, value=value) for name, value in v.items()]
 
+    @field_validator("level", mode="before")
+    @classmethod
+    def __subtract_level(cls, v: int) -> int:
+        return v - 1
+
     @model_validator(mode="before")
     @classmethod
     def __transform_main_stat(cls, v: dict[str, Any]) -> dict[str, Any]:
