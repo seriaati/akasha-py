@@ -43,7 +43,10 @@ class AkashaAPI:
             return
         await self._session.close()
 
-    def _raise_for_error(self, data: dict[str, Any]) -> None:
+    def _raise_for_error(self, data: list[dict[str, Any]] | dict[str, Any]) -> None:
+        if isinstance(data, list):
+            return
+
         if (error := data.get("error")) is not None:
             if (message := data.get("message")) is not None:
                 title = message
@@ -89,7 +92,12 @@ class AkashaAPI:
             use_cache: Whether to use the cache.
         """
         data = await self._request(f"getCalculationsForUser/{uid}", use_cache=use_cache)
-        return [UserCalc(**calc) for calc in data]
+        user_calcs = [UserCalc(**calc) for calc in data]
+        for user_calc in user_calcs:
+            user_calc.name = await self.translate(user_calc.name)
+            for calc in user_calc.calculations:
+                calc.weapon.name = await self.translate(calc.weapon.name)
+        return user_calcs
 
     async def get_leaderboards(
         self, calculation_id: int, *, size: int = 10, page: int = 1, use_cache: bool = True
