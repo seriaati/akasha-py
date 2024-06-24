@@ -82,8 +82,8 @@ class AkashaAPI:
         """Get the calculations for a user.
 
         Args:
-            uid (int): The user ID.
-            use_cache (bool): Whether to use the cache.
+            uid: The user ID.
+            use_cache: Whether to use the cache.
         """
         data = await self._request(f"getCalculationsForUser/{uid}", use_cache=use_cache)
         return [UserCalc(**calc) for calc in data]
@@ -94,10 +94,10 @@ class AkashaAPI:
         """Get the leaderboards for a calculation.
 
         Args:
-            calculation_id (int): The calculation ID.
-            size (int): The number of leaderboards to return.
-            page (int): The page number.
-            use_cache (bool): Whether to use the cache.
+            calculation_id: The calculation ID.
+            size: The number of leaderboards to return.
+            page: The page number.
+            use_cache: Whether to use the cache.
         """
         data = await self._request(
             "leaderboards",
@@ -116,14 +116,15 @@ class AkashaAPI:
         """Refresh the Enka data of a player.
 
         Args:
-            uid (int): The UID of the player.
+            uid: The UID of the player.
         """
         await self._request(f"user/refresh/{uid}", use_cache=False)
 
-    async def get_user(self, uid: int) -> None:
+    async def get_user(self, uid: int, *, use_cache: bool) -> None:
         """Get the user data.
 
         Args:
-            uid (int): The UID of the player.
+            uid: The UID of the player.
+            use_cache: Whether to use the cache.
         """
-        await self._request(f"user/{uid}", use_cache=True)
+        await self._request(f"user/{uid}", use_cache=use_cache)
