@@ -5,6 +5,7 @@ from aiohttp_client_cache.session import CachedSession
 
 from akasha.enums import Language
 from akasha.errors import DESC_TO_ERROR, AkashaAPIError
+from akasha.models.artifact import Artifact
 
 from .models import Leaderboard, UserCalc
 
@@ -180,3 +181,14 @@ class AkashaAPI:
             return word
 
         return (await self.get_translations([word]))[word.lower()]
+
+    async def get_artifacts(self, uid: int, md5: str, *, use_cache: bool = True) -> list[Artifact]:
+        """Get the artifacts of a build.
+
+        Args:
+            uid: The UID of the owner of the build.
+            md5: The MD5 hash of the build.
+            use_cache: Whether to use the cache.
+        """
+        data = await self._request(f"artifacts/{uid}/{md5}", use_cache=use_cache)
+        return [Artifact(**artifact) for artifact in data]

@@ -104,6 +104,7 @@ select = [
 
 [tool.ruff.lint.flake8-type-checking]
 quote-annotations = true
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [tool.pyright]
 ignore = [

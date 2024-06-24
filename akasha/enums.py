@@ -1,6 +1,6 @@
 from enum import StrEnum
 
-__all__ = ("Language",)
+__all__ = ("EquipType", "Language")
 
 
 class Language(StrEnum):
@@ -18,3 +18,13 @@ class Language(StrEnum):
     VIETNAMESE = "vi"
     CHINESE_SIMPLIFIED = "zh-CN"
     CHINESE_TRADITIONAL = "zh-TW"
+
+
+class EquipType(StrEnum):
+    """Artifact types."""
+
+    FLOWER = "EQUIP_BRACER"
+    FEATHER = "EQUIP_NECKLACE"
+    SANDS = "EQUIP_SHOES"
+    GOBLET = "EQUIP_RING"
+    CIRCLET = "EQUIP_DRESS"
