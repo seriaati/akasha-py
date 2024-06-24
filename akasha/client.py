@@ -172,6 +172,8 @@ class AkashaAPI:
     async def translate(self, word: str) -> str:
         """Translate a word.
 
+        Do not use this method for multiple translations, use get_translations instead.
+
         Args:
             word: The word to translate.
 
