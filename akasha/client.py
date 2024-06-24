@@ -3,6 +3,7 @@ from typing import Any, Final, Self
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 
+from akasha.enums import Language
 from akasha.errors import DESC_TO_ERROR, AkashaAPIError
 
 from .models import Leaderboard, UserCalc
@@ -15,10 +16,12 @@ class AkashaAPI:
 
     def __init__(
         self,
+        lang: Language = Language.ENGLISH,
         headers: dict[str, Any] | None = None,
         cache_name: str = "./.cache/akasha-py.db",
         cache_ttl: int = 360,
     ) -> None:
+        self._lang = lang
         self._headers = headers or {"User-Agent": "akasha-py"}
         self._cache_name = cache_name
         self._cache_ttl = cache_ttl
@@ -72,7 +75,7 @@ class AkashaAPI:
                 response.raise_for_status()
                 data = await response.json()
 
-        data = data["data"]
+        data = data.get("data", data)
         self._raise_for_error(data)
         return data
 
@@ -128,3 +131,28 @@ class AkashaAPI:
             use_cache: Whether to use the cache.
         """
         await self._request(f"user/{uid}", use_cache=use_cache)
+
+    async def get_translations(self, words: list[str]) -> dict[str, str]:
+        """Get the translations for a list of words.
+
+        Args:
+            words: The list of words to translate.
+
+        Returns:
+            A dictionary of the translations. Key is word.lower(), value is the translation.
+        """
+        data = await self._request(
+            f"textmap/{self._lang.value}", use_cache=True, params={"words[]": words}
+        )
+        return data["translation"]
+
+    async def translate(self, word: str) -> str:
+        """Translate a word.
+
+        Args:
+            word: The word to translate.
+
+        Returns:
+            The translation of the word.
+        """
+        return (await self.get_translations([word]))[word.lower()]
