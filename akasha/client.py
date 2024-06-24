@@ -93,10 +93,20 @@ class AkashaAPI:
         """
         data = await self._request(f"getCalculationsForUser/{uid}", use_cache=use_cache)
         user_calcs = [UserCalc(**calc) for calc in data]
+
+        strings: set[str] = set()
         for user_calc in user_calcs:
-            user_calc.name = await self.translate(user_calc.name)
+            strings.add(user_calc.name)
             for calc in user_calc.calculations:
-                calc.weapon.name = await self.translate(calc.weapon.name)
+                strings.add(calc.weapon.name)
+
+        translations = await self.get_translations(list(strings))
+
+        for user_calc in user_calcs:
+            user_calc.name = translations.get(user_calc.name.lower(), user_calc.name)
+            for calc in user_calc.calculations:
+                calc.weapon.name = translations.get(calc.weapon.name.lower(), calc.weapon.name)
+
         return user_calcs
 
     async def get_leaderboards(
