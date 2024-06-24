@@ -149,6 +149,9 @@ class AkashaAPI:
         Returns:
             A dictionary of the translations. Key is word.lower(), value is the translation.
         """
+        if self._lang is Language.ENGLISH:
+            return {word.lower(): word for word in words}
+
         data = await self._request(
             f"textmap/{self._lang.value}", use_cache=True, params={"words[]": words}
         )
@@ -163,4 +166,7 @@ class AkashaAPI:
         Returns:
             The translation of the word.
         """
+        if self._lang is Language.ENGLISH:
+            return word
+
         return (await self.get_translations([word]))[word.lower()]
