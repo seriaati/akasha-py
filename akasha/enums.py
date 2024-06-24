@@ -28,3 +28,13 @@ class EquipType(StrEnum):
     SANDS = "EQUIP_SHOES"
     GOBLET = "EQUIP_RING"
     CIRCLET = "EQUIP_DRESS"
+
+
+class Element(StrEnum):
+    HYDRO = "Hydro"
+    ANEMO = "Anemo"
+    PYRO = "Pyro"
+    CRYO = "Cryo"
+    ELECTRO = "Electro"
+    GEO = "Geo"
+    DENDRO = "Dendro"
