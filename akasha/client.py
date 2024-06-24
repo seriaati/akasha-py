@@ -151,11 +151,12 @@ class AkashaAPI:
         """
         await self._request(f"user/{uid}", use_cache=use_cache)
 
-    async def get_translations(self, words: list[str]) -> dict[str, str]:
+    async def get_translations(self, words: list[str], *, use_cache: bool = True) -> dict[str, str]:
         """Get the translations for a list of words.
 
         Args:
             words: The list of words to translate.
+            use_cache: Whether to use the cache.
 
         Returns:
             A dictionary of the translations. Key is word.lower(), value is the translation.
@@ -164,7 +165,7 @@ class AkashaAPI:
             return {word.lower(): word for word in words}
 
         data = await self._request(
-            f"textmap/{self._lang.value}", use_cache=True, params={"words[]": words}
+            f"textmap/{self._lang.value}", use_cache=use_cache, params={"words[]": words}
         )
         return data["translation"]
 
