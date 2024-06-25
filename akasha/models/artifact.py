@@ -1,15 +1,24 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 
-from ..enums import EquipType
+from akasha.constants import PERCENT_STAT_TYPES
+
+from .. import enums
 
 __all__ = ("Artifact", "ArtifactStat")
 
 
 class ArtifactStat(BaseModel):
-    name: str
+    type: enums.ArtifactStat = Field(alias="name")
     value: float
+
+    @computed_field
+    @property
+    def display_value(self) -> str:
+        if self.type in PERCENT_STAT_TYPES:
+            return f"{self.value * 100:.1f}%"
+        return str(round(self.value))
 
 
 class Artifact(BaseModel):
@@ -18,7 +27,7 @@ class Artifact(BaseModel):
     rarity: int = Field(alias="stars")
     main_stat: ArtifactStat
     substats: list[ArtifactStat]
-    equip_type: EquipType = Field(alias="equipType")
+    equip_type: enums.EquipType = Field(alias="equipType")
     level: int
     crit_value: float = Field(alias="critValue")
     icon: str
@@ -26,7 +35,9 @@ class Artifact(BaseModel):
     @field_validator("substats", mode="before")
     @classmethod
     def __transform_substats(cls, v: dict[str, float]) -> list[ArtifactStat]:
-        return [ArtifactStat(name=name, value=value) for name, value in v.items()]
+        return [
+            ArtifactStat(name=enums.ArtifactStat(name), value=value) for name, value in v.items()
+        ]
 
     @field_validator("level", mode="before")
     @classmethod

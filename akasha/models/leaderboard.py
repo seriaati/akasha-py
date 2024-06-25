@@ -1,8 +1,9 @@
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 
-from akasha.enums import Element
+from akasha.constants import PERCENT_STAT_TYPES
+from akasha.enums import CharaStatType, Element
 
 __all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
 
@@ -71,6 +72,18 @@ class CharacterWeapon(BaseModel):
         return v
 
 
+class CharacterStat(BaseModel):
+    type: CharaStatType
+    value: float
+
+    @computed_field
+    @property
+    def display_value(self) -> str:
+        if self.type in PERCENT_STAT_TYPES:
+            return f"{self.value * 100:.1f}%"
+        return str(round(self.value))
+
+
 class Leaderboard(BaseModel):
     id: str = Field(alias="_id")
     calculation: LeaderboardCalc
@@ -86,15 +99,20 @@ class Leaderboard(BaseModel):
     crit_value: float = Field(alias="critValue")
     ascension: int
     level: int
-    stats: dict[str, float]
+    stats: dict[CharaStatType, CharacterStat]
     talents: dict[str, CharacterTalent] = Field(alias="talentsLevelMap")
     weapon: CharacterWeapon
     element: Element = Field(alias="characterMetadata")
 
     @field_validator("stats", mode="before")
     @classmethod
-    def __unnest_stats_value(cls, v: dict[str, dict[str, float]]) -> dict[str, float]:
-        return {k: v["value"] for k, v in v.items()}
+    def __unnest_stats_value(
+        cls, v: dict[str, dict[str, float]]
+    ) -> dict[CharaStatType, CharacterStat]:
+        return {
+            CharaStatType(k): CharacterStat(type=CharaStatType(k), value=v["value"])
+            for k, v in v.items()
+        }
 
     @field_validator("element", mode="before")
     @classmethod
