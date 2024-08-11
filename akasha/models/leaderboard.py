@@ -14,7 +14,7 @@ class LeaderboardCalc(BaseModel):
 
 
 class ProfilePicture(BaseModel):
-    icon: str
+    icon: str | None = None
     old_icon: str | None = Field(None, alias="oldIcon")
 
     @field_validator("icon", "old_icon", mode="after")
@@ -25,6 +25,8 @@ class ProfilePicture(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def __flatten_assets(cls, v: dict[str, Any]) -> dict[str, Any]:
+        if not isinstance(v, dict):
+            return {}
         assets = v.pop("assets", {})
         return {**v, **assets}
 
