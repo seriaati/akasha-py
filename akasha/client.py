@@ -149,6 +149,8 @@ class AkashaAPI:
             uid: The UID of the player.
             use_cache: Whether to use the cache.
         """
+        msg = "This method is not implemented yet."
+        raise NotImplementedError(msg)
         await self._request(f"user/{uid}", use_cache=use_cache)
 
     async def get_translations(self, words: list[str], *, use_cache: bool = True) -> dict[str, str]:
