@@ -2,6 +2,7 @@ from typing import Any, Final, Self
 
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
+from loguru import logger
 
 from akasha.enums import Language
 from akasha.errors import DESC_TO_ERROR, AkashaAPIError
@@ -21,12 +22,14 @@ class AkashaAPI:
         headers: dict[str, Any] | None = None,
         cache_name: str = "./.cache/akasha-py.db",
         cache_ttl: int = 360,
+        debug: bool = False,
     ) -> None:
         self._lang = lang
         self._headers = headers or {"User-Agent": "akasha-py"}
         self._cache_name = cache_name
         self._cache_ttl = cache_ttl
         self._session: CachedSession | None = None
+        self.debug = debug
 
     async def __aenter__(self) -> Self:
         await self.start()
@@ -69,6 +72,8 @@ class AkashaAPI:
 
         url = f"{self.BASE_URL}/{endpoint}"
         params = params or {}
+        if self.debug:
+            logger.debug(f"Requesting {url} with params {params}")
 
         if not use_cache:
             async with self._session.disabled(), self._session.get(url, params=params) as response:
