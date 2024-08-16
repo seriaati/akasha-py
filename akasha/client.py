@@ -4,11 +4,11 @@ from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from loguru import logger
 
-from akasha.enums import Language
-from akasha.errors import DESC_TO_ERROR, AkashaAPIError
-from akasha.models.artifact import Artifact
 
+from .enums import Language
+from .errors import DESC_TO_ERROR, AkashaAPIError
 from .models import Leaderboard, UserCalc
+from .models.artifact import Artifact
 
 __all__ = ("AkashaAPI",)
 
