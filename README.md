@@ -51,9 +51,8 @@ async def main() -> None:
             print(f"Damage: {round(calc.result)}")
             print()
 
-            boards = await api.get_leaderboards(calc.id)
             print("Leaderboard top 3:")
-            for board in boards[:3]:
+            async for board in api.get_leaderboards(calc.id, max_page=1, page_size=3):
                 print(
                     f"{board.rank}. {board.owner.nickname} | Damage: {round(board.calculation.result)}"
                 )
