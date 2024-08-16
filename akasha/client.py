@@ -4,6 +4,7 @@ from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from loguru import logger
 
+from akasha.models.leaderboard import LeaderboardPaginator
 
 from .enums import Language
 from .errors import DESC_TO_ERROR, AkashaAPIError
@@ -115,29 +116,37 @@ class AkashaAPI:
 
         return user_calcs
 
-    async def get_leaderboards(
-        self, calculation_id: int, *, size: int = 10, page: int = 1, use_cache: bool = True
+    async def _fetch_leaderboards(
+        self, calculation_id: int, page: int, page_size: int, p: str, use_cache: bool
     ) -> list[Leaderboard]:
-        """Get the leaderboards for a calculation.
-
-        Args:
-            calculation_id: The calculation ID.
-            size: The number of leaderboards to return.
-            page: The page number.
-            use_cache: Whether to use the cache.
-        """
         data = await self._request(
             "leaderboards",
             params={
                 "calculationId": calculation_id,
-                "size": size,
+                "size": page_size,
                 "page": page,
                 "sort": "calculation.result",
                 "order": -1,
+                "p": p,
             },
             use_cache=use_cache,
         )
         return [Leaderboard(**lb) for lb in data]
+
+    def get_leaderboards(
+        self, calculation_id: int, max_page: int, *, page_size: int = 20, use_cache: bool = True
+    ) -> LeaderboardPaginator:
+        """Get a leaderboard paginator for a calculation.
+
+        Args:
+            calculation_id: The calculation ID.
+            max_page: The maximum number of pages to return.
+            page_size: The number of leaderboards to return per page.
+            use_cache: Whether to use the cache.
+        """
+        return LeaderboardPaginator(
+            self._fetch_leaderboards, calculation_id, page_size, max_page, use_cache
+        )
 
     async def refresh_user(self, uid: int) -> None:
         """Refresh the Enka data of a player.

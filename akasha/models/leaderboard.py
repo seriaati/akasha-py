@@ -1,9 +1,14 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Self
 
 from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 
 from akasha.constants import PERCENT_STAT_TYPES
 from akasha.enums import CharaStatType, Element
+
+if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable
 
 __all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
 
@@ -128,3 +133,48 @@ class Leaderboard(BaseModel):
         v["ascension"] = int(prop_map["ascension"]["val"])
         v["level"] = int(prop_map["level"]["val"])
         return v
+
+
+class LeaderboardPaginator:
+    def __init__(
+        self,
+        fetch_boards: Callable[[int, int, int, str, bool], Awaitable[list[Leaderboard]]],
+        calculation_id: int,
+        page_size: int,
+        max_page: int,
+        use_cache: bool,
+    ) -> None:
+        self._fetch_boards = fetch_boards
+        self._boards: list[Leaderboard] = []
+
+        self._calculation_id = calculation_id
+        self._page = 1
+        self._index = 0
+        self._page_size = page_size
+        self._max_page = max_page
+        self._use_cache = use_cache
+
+    def __aiter__(self) -> Self:
+        return self
+
+    async def __anext__(self) -> Leaderboard:
+        if self._max_page < 0:
+            msg = "max_page must be greater than 0"
+            raise ValueError(msg)
+
+        if self._index >= len(self._boards) - 1:
+            if self._page > self._max_page:
+                raise StopAsyncIteration
+            self._boards = await self._fetch_boards(
+                self._calculation_id,
+                self._page,
+                self._page_size,
+                f"lt|{self._boards[-1].calculation.result}" if self._boards else "",
+                self._use_cache,
+            )
+            self._index = 0
+            self._page += 1
+        else:
+            self._index += 1
+
+        return self._boards[self._index]
