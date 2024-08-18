@@ -130,8 +130,8 @@ class Leaderboard(BaseModel):
     @classmethod
     def __unnest_fields(cls, v: dict[str, Any]) -> dict[str, Any]:
         prop_map = v.pop("propMap")
-        v["ascension"] = int(prop_map["ascension"]["val"])
-        v["level"] = int(prop_map["level"]["val"])
+        v["ascension"] = int(prop_map["ascension"]["val"] or 0)
+        v["level"] = int(prop_map["level"]["val"] or 1)
         return v
 
 
