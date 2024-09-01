@@ -7,7 +7,7 @@ from loguru import logger
 from akasha.models.leaderboard import LeaderboardPaginator
 
 from .enums import Language
-from .errors import DESC_TO_ERROR, AkashaAPIError
+from .errors import DESC_TO_ERROR, AkashaAPIError, InvalidAPIRequestError
 from .models import Leaderboard, UserCalc
 from .models.artifact import Artifact
 
@@ -51,6 +51,10 @@ class AkashaAPI:
     def _raise_for_error(self, data: list[dict[str, Any]] | dict[str, Any]) -> None:
         if isinstance(data, list):
             return
+
+        if "I want" in data.get("message", ""):
+            msg = "Invalid API request"
+            raise InvalidAPIRequestError(msg, data["message"])
 
         if (error := data.get("error")) is not None:
             if (message := data.get("message")) is not None:

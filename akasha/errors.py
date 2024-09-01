@@ -23,6 +23,10 @@ class IncorrectUIDFormatError(AkashaAPIError):
     """Raised when the provided UID is not in the correct format."""
 
 
+class InvalidAPIRequestError(AkashaAPIError):
+    """Raised when the API request is invalid."""
+
+
 DESC_TO_ERROR = {
     "Provided UID cannot be fetched from Enka Network API": UIDNotFoundError,
     "The UID format is incorrect": IncorrectUIDFormatError,
