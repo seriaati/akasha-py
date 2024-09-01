@@ -138,6 +138,31 @@ class AkashaAPI:
         )
         return [Leaderboard(**lb) for lb in data]
 
+    async def get_leaderboard_for_uid(
+        self, calculation_id: int, *, uid: int, use_cache: bool = True
+    ) -> Leaderboard:
+        """Get the leaderboard of a user for a calculation.
+
+        Args:
+            calculation_id: The calculation ID.
+            uid: The UID of the player.
+            use_cache: Whether to use the cache.
+        """
+        data = await self._request(
+            "leaderboards",
+            params={
+                "calculationId": calculation_id,
+                "uids": f"[uid]{uid}",
+                "size": 20,
+                "page": 1,
+                "sort": "calculation.result",
+                "filter": "[all]1",
+                "order": -1,
+            },
+            use_cache=use_cache,
+        )
+        return Leaderboard(**data[0])
+
     def get_leaderboards(
         self, calculation_id: int, max_page: int, *, page_size: int = 20, use_cache: bool = True
     ) -> LeaderboardPaginator:
