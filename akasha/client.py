@@ -4,6 +4,7 @@ from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
 from loguru import logger
 
+from akasha.models.category import LeaderboardCategory
 from akasha.models.leaderboard import LeaderboardPaginator
 
 from .enums import Language
@@ -215,3 +216,22 @@ class AkashaAPI:
         """
         data = await self._request(f"artifacts/{uid}/{md5}", use_cache=use_cache)
         return [Artifact(**artifact) for artifact in data]
+
+    async def get_categories(self, character_name: str) -> list[LeaderboardCategory]:
+        """Get leaderboard categories of a character based on their name.
+
+        Args:
+            character_name: The name of the character.
+        """
+        data = await self._request(
+            "v2/leaderboards/categories",
+            use_cache=True,
+            params={
+                "characterName": [character_name],
+                "sort": "count",
+                "order": "-1",
+                "size": "20",
+                "page": "1",
+            },
+        )
+        return [LeaderboardCategory(**category) for category in data]
