@@ -14,6 +14,11 @@ class CharacterCalcWeapon(BaseModel):
     refinement: Literal[1, 2, 3, 4, 5]
 
 
+class CharacterCalcVariant(BaseModel):
+    name: str
+    display_name: str = Field(alias="displayName")
+
+
 class CharacterCalc(BaseModel):
     id: int = Field(alias="calculationId")
     short: str
@@ -24,6 +29,7 @@ class CharacterCalc(BaseModel):
     stats: dict[str, float]
     ranking: int
     out_of: int = Field(alias="outOf")
+    variant: CharacterCalcVariant | None = None
 
     @computed_field
     @property
