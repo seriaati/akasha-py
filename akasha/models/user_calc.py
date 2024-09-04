@@ -26,7 +26,7 @@ class CharacterCalc(BaseModel):
     details: str
     weapon: CharacterCalcWeapon
     result: float
-    stats: dict[str, float]
+    stats: dict[str, float] | None = None
     ranking: int
     out_of: int = Field(alias="outOf")
     variant: CharacterCalcVariant | None = None
