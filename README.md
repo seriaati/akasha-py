@@ -4,6 +4,7 @@
 
 akasha-py is an async API wrapper for [akasha.cv](https://akasha.cv/) written in Python.  
 akasha.cv is a Genshin Impact leaderboard website.  
+Developing something for Hoyoverse games? You might be interested in [other API wrappers](https://github.com/seriaati#api-wrappers) written by me.  
 > Note: I am not the developer of akasha.cv.
 
 ## Important Notes
@@ -64,8 +65,7 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-## Questions, Issues, Contributions
+## Questions, Issues, Feedback, Contributions
 
-For questions, you can contact me on [Discord](https://discord.com/users/410036441129943050) or open an [issue](https://github.com/seriaati/akasha-py/issues).  
-To report issues with this wrapper, open an [issue](https://github.com/seriaati/akasha-py/issues).  
-To contribute, fork this repo and submit a [pull request](https://github.com/seriaati/akasha-py/pulls).
+Whether you want to make any bug reports, feature requests, or contribute to the wrapper, simply open an issue or pull request in this repository.  
+If GitHub is not your type, you can find me on [Discord](https://discord.com/invite/b22kMKuwbS), my username is @seria_ati.
