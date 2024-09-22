@@ -29,7 +29,7 @@ class TeammateWeapon(BaseModel):
 
 class LeaderboardTeammate(BaseModel):
     character: TeammateCharacter
-    weapon: TeammateWeapon
+    weapon: TeammateWeapon | None = None
 
 
 class WeaponLeaderboard(BaseModel):
@@ -49,6 +49,7 @@ class LeaderboardCategory(BaseModel):
     added_date: datetime.datetime = Field(alias="addDate")
     character_id: int = Field(alias="characterId")
     character_name: str = Field(alias="characterName")
+    weapons: list[WeaponLeaderboard]
 
     count: int
     details: str
