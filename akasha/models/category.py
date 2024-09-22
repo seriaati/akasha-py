@@ -17,7 +17,7 @@ class TeammateCharacter(BaseModel):
     element: str
     rarity: Literal[4, 5]
     icon: str
-    constellation: Literal[0, 1, 2, 3, 4, 5, 6]
+    constellation: Literal[0, 1, 2, 3, 4, 5, 6] | None
 
 
 class TeammateWeapon(BaseModel):
