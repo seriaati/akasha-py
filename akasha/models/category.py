@@ -1,7 +1,7 @@
 import datetime
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 __all__ = (
     "LeaderboardCategory",
@@ -42,6 +42,11 @@ class WeaponLeaderboard(BaseModel):
     details: str
     short_name: str = Field(alias="short")
     teammates: list[LeaderboardTeammate]
+
+    @field_validator("teammates", mode="before")
+    @classmethod
+    def __parse_teammates(cls, v: list[dict[str, Any]]) -> list[LeaderboardTeammate]:
+        return [LeaderboardTeammate(**teammate) for teammate in v if "name" in teammate]
 
 
 class LeaderboardCategory(BaseModel):
