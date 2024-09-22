@@ -70,7 +70,12 @@ class AkashaAPI:
             raise AkashaAPIError(title, description)
 
     async def _request(
-        self, endpoint: str, use_cache: bool, *, params: dict[str, Any] | None = None
+        self,
+        endpoint: str,
+        use_cache: bool,
+        *,
+        params: dict[str, Any] | None = None,
+        return_raw: bool = False,
     ) -> Any:
         if self._session is None:
             msg = f"Session is not started, call {self.__class__.__name__}.start() first."
@@ -89,6 +94,9 @@ class AkashaAPI:
             async with self._session.get(url, params=params) as response:
                 response.raise_for_status()
                 data = await response.json()
+
+        if return_raw:
+            return data
 
         data = data.get("data", data)
         self._raise_for_error(data)
@@ -254,3 +262,38 @@ class AkashaAPI:
             params={"characterId": character_id},
         )
         return [LeaderboardCategory(**category) for category in data]
+
+    async def get_collection_size(self, hash_: str, *, variant: str) -> int:
+        """Get the size of a collection.
+
+        Args:
+            hash_: The hash of the collection.
+            variant: The variant of the collection.
+        """
+        data = await self._request(
+            "getCollectionSize",
+            use_cache=True,
+            params={"hash": hash_, "variant": variant},
+            return_raw=True,
+        )
+        return data["totalRows"]
+
+    async def get_leaderboard_total_size(self, calculation_id: int) -> int:
+        """Get the total size of a leaderboard.
+
+        Args:
+            calculation_id: The calculation ID.
+        """
+        data = await self._request(
+            "leaderboards",
+            use_cache=True,
+            params={
+                "calculationId": calculation_id,
+                "sort": "calculation.result",
+                "order": -1,
+                "size": 1,
+                "page": 1,
+            },
+            return_raw=True,
+        )
+        return await self.get_collection_size(data["totalRowsHash"], variant="charactersLb")
