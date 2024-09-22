@@ -148,13 +148,16 @@ class AkashaAPI:
 
     async def get_leaderboard_for_uid(
         self, calculation_id: int, *, uid: int, use_cache: bool = True
-    ) -> Leaderboard:
+    ) -> Leaderboard | None:
         """Get the leaderboard of a user for a calculation.
 
         Args:
             calculation_id: The calculation ID.
             uid: The UID of the player.
             use_cache: Whether to use the cache.
+
+        Returns:
+            The leaderboard of the user for the calculation, or None if the user is not found.
         """
         data = await self._request(
             "leaderboards",
@@ -169,6 +172,8 @@ class AkashaAPI:
             },
             use_cache=use_cache,
         )
+        if not data:
+            return None
         return Leaderboard(**data[0])
 
     def get_leaderboards(
