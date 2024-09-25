@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Final, Self
 
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import StrEnum
 
 __all__ = ("ArtifactStat", "CharaStatType", "Element", "EquipType", "Language")

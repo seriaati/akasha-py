@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .enums import ArtifactStat, CharaStatType
 
 PERCENT_STAT_TYPES: set[CharaStatType | ArtifactStat] = {

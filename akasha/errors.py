@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ("DESC_TO_ERROR", "AkashaAPIError", "UIDNotFoundError")
 
 
