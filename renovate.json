@@ -6,5 +6,11 @@
     ":semanticCommitTypeAll(chore)"
   ],
   "automerge": true,
-  "automergeStrategy": "squash"
+  "automergeStrategy": "squash",
+  "packageRules": [
+    {
+      "matchPackageNames": ["aiohttp"],
+      "enabled": false
+    }
+  ]
 }
