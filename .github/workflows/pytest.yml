@@ -18,8 +18,5 @@ jobs:
         with:
           version: "0.4.16"
 
-      - name: Install dependencies
-        run: uv sync --extra test
-
       - name: Run tests
-        run: uv run pytest
+        run: uv run --extra test -p 3.11 pytest
