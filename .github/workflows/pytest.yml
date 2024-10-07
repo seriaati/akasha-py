@@ -19,4 +19,4 @@ jobs:
           version: "0.4.16"
 
       - name: Run tests
-        run: uv run --extra test -p 3.11 pytest
+        run: uv run -p 3.11 pytest
