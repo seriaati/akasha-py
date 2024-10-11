@@ -90,3 +90,4 @@ class CharaStatType(StrEnum):
     ELECTRO_DMG_BONUS = "electroDamageBonus"
     GEO_DMG_BONUS = "geoDamageBonus"
     DENDRO_DMG_BONUS = "dendroDamageBonus"
+    PHYSICAL_DMG_BONUS = "physicalDamageBonus"
