@@ -64,5 +64,5 @@ class UserCalc(BaseModel):
 
     @field_validator("calculations", mode="before")
     @classmethod
-    def __flatten_calculations(cls, v: dict[str, Any]) -> list[CharacterCalc]:
-        return [CharacterCalc(**calc) for calc in v.values()]
+    def __flatten_calculations(cls, v: dict[str, Any] | None) -> list[CharacterCalc]:
+        return [CharacterCalc(**calc) for calc in v.values()] if v is not None else []
