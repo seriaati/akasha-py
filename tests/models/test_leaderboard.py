@@ -11,8 +11,15 @@ async def test_leaderboard() -> None:
 
 async def test_leaderboard_for_uid() -> None:
     async with akasha.AkashaAPI() as api:
-        data = await api.get_leaderboard_for_uid(1000009808, uid=901211014)
+        data = await api.get_leaderboard_for_uids(1000009808, uids=901211014)
         assert data and data.uid == "901211014"
+
+
+async def test_leaderboard_for_uids() -> None:
+    async with akasha.AkashaAPI() as api:
+        data = await api.get_leaderboard_for_uids(1000009808, uids=(901211014, 901211015))
+        assert data
+        assert data[0].uid == "901211014"
 
 
 async def test_leaderboard_total_size() -> None:

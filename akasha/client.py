@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Final, Self
+from typing import TYPE_CHECKING, Any, Final, Self, overload
 
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
@@ -13,6 +13,9 @@ from .enums import Language
 from .errors import DESC_TO_ERROR, AkashaAPIError, InvalidAPIRequestError
 from .models import Leaderboard, UserCalc
 from .models.artifact import Artifact
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 __all__ = ("AkashaAPI",)
 
@@ -148,24 +151,37 @@ class AkashaAPI:
         )
         return [Leaderboard(**lb) for lb in data]
 
-    async def get_leaderboard_for_uid(
-        self, calculation_id: int, *, uid: int, use_cache: bool = True
-    ) -> Leaderboard | None:
-        """Get the leaderboard of a user for a calculation.
+    @overload
+    async def get_leaderboard_for_uids(
+        self, calculation_id: int, *, uids: Sequence[int], use_cache: bool = ...
+    ) -> list[Leaderboard] | None: ...
+    @overload
+    async def get_leaderboard_for_uids(
+        self, calculation_id: int, *, uids: int, use_cache: bool = ...
+    ) -> Leaderboard | None: ...
+    async def get_leaderboard_for_uids(
+        self, calculation_id: int, *, uids: Sequence[int] | int, use_cache: bool = True
+    ) -> list[Leaderboard] | Leaderboard | None:
+        """Get the leaderboard(s) of player(s) for a calculation.
 
         Args:
             calculation_id: The calculation ID.
-            uid: The UID of the player.
+            uids: The UID(s) of the player(s).
             use_cache: Whether to use the cache.
 
         Returns:
             The leaderboard of the user for the calculation, or None if the user is not found.
         """
+        is_int = False
+        if isinstance(uids, int):
+            is_int = True
+            uids = [uids]
+
         data = await self._request(
             "leaderboards",
             params={
                 "calculationId": calculation_id,
-                "uids": f"[uid]{uid}",
+                "uids": f"[uid]{'[uid]'.join(map(str, uids))}",
                 "size": 20,
                 "page": 1,
                 "sort": "calculation.result",
@@ -176,7 +192,10 @@ class AkashaAPI:
         )
         if not data:
             return None
-        return Leaderboard(**data[0])
+
+        if is_int:
+            return Leaderboard(**data[0])
+        return [Leaderboard(**lb) for lb in data]
 
     def get_leaderboards(
         self, calculation_id: int, max_page: int, *, page_size: int = 20, use_cache: bool = True
