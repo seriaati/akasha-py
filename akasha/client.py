@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Final, Self, overload
+from typing import TYPE_CHECKING, Any, Final, Self
 
 from aiohttp_client_cache.backends.sqlite import SQLiteBackend
 from aiohttp_client_cache.session import CachedSession
@@ -135,7 +135,14 @@ class AkashaAPI:
         return user_calcs
 
     async def _fetch_leaderboards(
-        self, calculation_id: int, page: int, page_size: int, p: str, use_cache: bool
+        self,
+        calculation_id: int,
+        page: int,
+        page_size: int,
+        p: str,
+        variant: str | None,
+        uids: Sequence[int] | None,
+        use_cache: bool,
     ) -> list[Leaderboard]:
         data = await self._request(
             "leaderboards",
@@ -145,60 +152,24 @@ class AkashaAPI:
                 "page": page,
                 "sort": "calculation.result",
                 "order": -1,
+                "variant": variant or "",
                 "p": p,
+                "uids": f"[uid]{'[uid]'.join(map(str, uids))}" if uids else "",
+                "filter": "[all]1" if uids else "",
             },
             use_cache=use_cache,
         )
-        return [Leaderboard(**lb) for lb in data]
-
-    @overload
-    async def get_leaderboard_for_uids(
-        self, calculation_id: int, *, uids: Sequence[int], use_cache: bool = ...
-    ) -> list[Leaderboard] | None: ...
-    @overload
-    async def get_leaderboard_for_uids(
-        self, calculation_id: int, *, uids: int, use_cache: bool = ...
-    ) -> Leaderboard | None: ...
-    async def get_leaderboard_for_uids(
-        self, calculation_id: int, *, uids: Sequence[int] | int, use_cache: bool = True
-    ) -> list[Leaderboard] | Leaderboard | None:
-        """Get the leaderboard(s) of player(s) for a calculation.
-
-        Args:
-            calculation_id: The calculation ID.
-            uids: The UID(s) of the player(s).
-            use_cache: Whether to use the cache.
-
-        Returns:
-            The leaderboard of the user for the calculation, or None if the user is not found.
-        """
-        is_int = False
-        if isinstance(uids, int):
-            is_int = True
-            uids = [uids]
-
-        data = await self._request(
-            "leaderboards",
-            params={
-                "calculationId": calculation_id,
-                "uids": f"[uid]{'[uid]'.join(map(str, uids))}",
-                "size": 20,
-                "page": 1,
-                "sort": "calculation.result",
-                "filter": "[all]1",
-                "order": -1,
-            },
-            use_cache=use_cache,
-        )
-        if not data:
-            return None
-
-        if is_int:
-            return Leaderboard(**data[0])
         return [Leaderboard(**lb) for lb in data]
 
     def get_leaderboards(
-        self, calculation_id: int, max_page: int, *, page_size: int = 20, use_cache: bool = True
+        self,
+        calculation_id: int,
+        *,
+        max_page: int,
+        page_size: int = 20,
+        variant: str | None = None,
+        uids: Sequence[int] | None = None,
+        use_cache: bool = True,
     ) -> LeaderboardPaginator:
         """Get a leaderboard paginator for a calculation.
 
@@ -206,10 +177,12 @@ class AkashaAPI:
             calculation_id: The calculation ID.
             max_page: The maximum number of pages to return.
             page_size: The number of leaderboards to return per page.
+            variant: The variant of the leaderboard, e.g. 160er.
+            uids: The UIDs of the players to get the leaderboard for.
             use_cache: Whether to use the cache.
         """
         return LeaderboardPaginator(
-            self._fetch_leaderboards, calculation_id, page_size, max_page, use_cache
+            self._fetch_leaderboards, calculation_id, page_size, max_page, variant, uids, use_cache
         )
 
     async def refresh_user(self, uid: int) -> None:

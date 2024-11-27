@@ -8,7 +8,7 @@ from akasha.constants import PERCENT_STAT_TYPES
 from akasha.enums import CharaStatType, Element
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable
+    from collections.abc import Awaitable, Callable, Sequence
 
 __all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
 
@@ -138,10 +138,15 @@ class Leaderboard(BaseModel):
 class LeaderboardPaginator:
     def __init__(
         self,
-        fetch_boards: Callable[[int, int, int, str, bool], Awaitable[list[Leaderboard]]],
+        fetch_boards: Callable[
+            [int, int, int, str, str | None, Sequence[int] | None, bool],
+            Awaitable[list[Leaderboard]],
+        ],
         calculation_id: int,
         page_size: int,
         max_page: int,
+        variant: str | None,
+        uids: Sequence[int] | None,
         use_cache: bool,
     ) -> None:
         self._fetch_boards = fetch_boards
@@ -152,6 +157,8 @@ class LeaderboardPaginator:
         self._index = 0
         self._page_size = page_size
         self._max_page = max_page
+        self._variant = variant
+        self._uids = uids
         self._use_cache = use_cache
 
     def __aiter__(self) -> Self:
@@ -170,6 +177,8 @@ class LeaderboardPaginator:
                 self._page,
                 self._page_size,
                 f"lt|{self._boards[-1].calculation.result}" if self._boards else "",
+                self._variant,
+                self._uids,
                 self._use_cache,
             )
             self._index = 0
@@ -177,4 +186,7 @@ class LeaderboardPaginator:
         else:
             self._index += 1
 
-        return self._boards[self._index]
+        try:
+            return self._boards[self._index]
+        except IndexError as e:
+            raise StopAsyncIteration from e
