@@ -34,6 +34,11 @@ class LeaderboardTeammate(BaseModel):
     weapon: TeammateWeapon | None = None
 
 
+class WeaponLeaderboardFilter(BaseModel):
+    id: str = Field(alias="name")
+    name: str = Field(alias="display_name")
+
+
 class WeaponLeaderboard(BaseModel):
     name: str
     icon: str
@@ -44,6 +49,7 @@ class WeaponLeaderboard(BaseModel):
     details: str
     short_name: str = Field(alias="short")
     teammates: list[LeaderboardTeammate]
+    filters: list[WeaponLeaderboardFilter]
 
     @field_validator("teammates", mode="before")
     @classmethod
