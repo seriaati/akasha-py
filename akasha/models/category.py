@@ -36,7 +36,7 @@ class LeaderboardTeammate(BaseModel):
 
 class WeaponLeaderboardFilter(BaseModel):
     id: str = Field(alias="name")
-    name: str = Field(alias="display_name")
+    name: str = Field(alias="displayName")
 
 
 class WeaponLeaderboard(BaseModel):
