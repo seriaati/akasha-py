@@ -56,6 +56,11 @@ class WeaponLeaderboard(BaseModel):
     def __parse_teammates(cls, v: list[dict[str, Any]]) -> list[LeaderboardTeammate]:
         return [LeaderboardTeammate(**teammate) for teammate in v if "name" in teammate]
 
+    @field_validator("filters", mode="before")
+    @classmethod
+    def __parse_filters(cls, v: list[dict[str, Any]] | None) -> list[WeaponLeaderboardFilter]:
+        return [WeaponLeaderboardFilter(**filter_) for filter_ in v] if v else []
+
 
 class LeaderboardCategory(BaseModel):
     id: str = Field(alias="_id")
