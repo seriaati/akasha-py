@@ -1,6 +1,6 @@
 [project]
 name = "akasha-py"
-version = "0.2.8"
+version = "0.2.9"
 description = "Async API wrapper for akasha.cv written in Python"
 readme = "README.md"
 requires-python = ">=3.11"
