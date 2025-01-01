@@ -74,7 +74,7 @@ class CharacterWeapon(BaseModel):
     def __unnest_weapon_info(cls, v: dict[str, Any]) -> dict[str, Any]:
         weapon_info = v.pop("weaponInfo")
         v["level"] = weapon_info["level"]
-        v["promoteLevel"] = weapon_info["promoteLevel"]
+        v["promoteLevel"] = weapon_info["promoteLevel"] or 0
         v["refinement"] = weapon_info["refinementLevel"]["value"]
         return v
 
