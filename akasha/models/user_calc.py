@@ -25,7 +25,7 @@ class CharacterCalc(BaseModel):
     id: int = Field(alias="calculationId")
     short: str
     name: str
-    details: str
+    details: str = ""
     weapon: CharacterCalcWeapon
     result: float
     stats: dict[str, float] | None = None
@@ -50,7 +50,7 @@ class UserCalc(BaseModel):
     character_id: int = Field(alias="characterId")
     type: str
     uid: str
-    artifact_sets: list[UserCalcArtifact] = Field(alias="artifactSets")
+    artifact_sets: list[UserCalcArtifact] = Field(alias="artifactSets", default_factory=list)
     calculations: list[CharacterCalc]
     constellation: Literal[0, 1, 2, 3, 4, 5, 6]
     md5: str
