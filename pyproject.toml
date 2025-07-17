@@ -34,3 +34,7 @@ typeCheckingMode = "standard"
 
 [tool.uv]
 dev-dependencies = ["pytest-asyncio>=0.24.0", "pytest>=8.3.3"]
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "akasha"
