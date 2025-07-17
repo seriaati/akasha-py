@@ -1,6 +1,6 @@
 [project]
 name = "akasha-py"
-version = "0.2.10"
+version = "0.2.11"
 description = "Async API wrapper for akasha.cv written in Python"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -19,8 +19,8 @@ Repository = "https://github.com/seriaati/akasha-py.git"
 Issues = "https://github.com/seriaati/akasha-py/issues"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.7.21,<0.8.0"]
+build-backend = "uv_build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["akasha"]
