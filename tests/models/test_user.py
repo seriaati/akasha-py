@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-import akasha
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import akasha
 
 
-async def test_refresh_user() -> None:
-    async with akasha.AkashaAPI() as api:
-        await api.refresh_user(901211014)
+async def test_refresh_user(api: akasha.AkashaAPI) -> None:
+    await api.refresh_user(901211014)

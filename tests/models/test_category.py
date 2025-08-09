@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-import akasha
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import akasha
 
 
-async def test_get_categories() -> None:
-    async with akasha.AkashaAPI() as api:
-        await api.get_categories("10000098")
+async def test_get_categories(api: akasha.AkashaAPI) -> None:
+    await api.get_categories("10000098")
