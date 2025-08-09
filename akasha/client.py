@@ -7,9 +7,11 @@ from aiohttp_client_cache.session import CachedSession
 from loguru import logger
 
 from akasha.models.category import LeaderboardCategory
-from akasha.models.leaderboard import LeaderboardPaginator
+from akasha.models.profile import Profile
+from akasha.paginators.leaderboard import LeaderboardPaginator
+from akasha.paginators.profile import ProfilePaginator
 
-from .enums import Language
+from .enums import Language, OrderBy, ProfileSortBy
 from .errors import DESC_TO_ERROR, AkashaAPIError, InvalidAPIRequestError
 from .models import Leaderboard, UserCalc
 from .models.artifact import Artifact
@@ -165,7 +167,7 @@ class AkashaAPI:
         self,
         calculation_id: int,
         *,
-        max_page: int,
+        max_page: int = 1,
         page_size: int = 20,
         variant: str | None = None,
         uids: Sequence[int] | None = None,
@@ -296,3 +298,54 @@ class AkashaAPI:
             return_raw=True,
         )
         return await self.get_collection_size(data["totalRowsHash"], variant="charactersLb")
+
+    async def _fetch_profiles(
+        self,
+        sort_by: ProfileSortBy,
+        order_by: OrderBy,
+        page: int,
+        page_size: int,
+        p: str,
+        from_id: str,
+        use_cache: bool,
+    ) -> list[Profile]:
+        data = await self._request(
+            "accounts",
+            use_cache=use_cache,
+            params={
+                "sort": sort_by.value,
+                "order": order_by.value,
+                "page": page,
+                "pageSize": page_size,
+                "p": p,
+                "fromId": from_id,
+            },
+        )
+        return [Profile(**profile) for profile in data]
+
+    def get_profiles(
+        self,
+        *,
+        sort_by: ProfileSortBy,
+        order_by: OrderBy = OrderBy.DESCENDING,
+        max_page: int = 1,
+        page_size: int = 20,
+        use_cache: bool = True,
+    ) -> ProfilePaginator:
+        """Get a paginator for profiles.
+
+        Args:
+            sort_by: The field to sort by.
+            order_by: The order to sort in.
+            max_page: The maximum number of pages to return.
+            page_size: The number of profiles to return per page.
+            use_cache: Whether to use the cache.
+        """
+        return ProfilePaginator(
+            fetcher=self._fetch_profiles,
+            sort_by=sort_by,
+            order_by=order_by,
+            page_size=page_size,
+            max_page=max_page,
+            use_cache=use_cache,
+        )

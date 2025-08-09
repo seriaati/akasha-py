@@ -1,8 +1,16 @@
 from __future__ import annotations
 
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 
-__all__ = ("ArtifactStat", "CharaStatType", "Element", "EquipType", "Language")
+__all__ = (
+    "ArtifactStat",
+    "CharaStatType",
+    "Element",
+    "EquipType",
+    "Language",
+    "OrderBy",
+    "ProfileSortBy",
+)
 
 
 class Language(StrEnum):
@@ -91,3 +99,14 @@ class CharaStatType(StrEnum):
     GEO_DMG_BONUS = "geoDamageBonus"
     DENDRO_DMG_BONUS = "dendroDamageBonus"
     PHYSICAL_DMG_BONUS = "physicalDamageBonus"
+
+
+class ProfileSortBy(StrEnum):
+    STYGIAN = "playerInfo.stygianScore"
+    ACHIEVEMENT_NUM = "playerInfo.finishAchievementNum"
+    UPDATED_AT = "lastProfileUpdate"
+
+
+class OrderBy(IntEnum):
+    ASCENDING = 1
+    DESCENDING = -1
