@@ -21,7 +21,7 @@ class NameCardAsset(BaseModel):
 
 
 class NameCard(BaseModel):
-    name: str | None
+    name: str | None = None
     id: int
     asset: NameCardAsset = Field(alias="assets")
 
@@ -31,7 +31,7 @@ class PlayerInfo(BaseModel):
     level: int
     signature: str | None = None
     region: str
-    name_card: NameCard = Field(alias="nameCardId")
+    name_card: NameCard | int = Field(alias="nameCardId")
 
     world_level: int | None = Field(default=None, alias="worldLevel")
     achievement_count: int = Field(alias="finishAchievementNum")
