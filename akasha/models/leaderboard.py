@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, computed_field, field_validator, model_va
 
 from akasha.constants import PERCENT_STAT_TYPES
 from akasha.enums import CharaStatType, Element
+from akasha.models.profile import PlayerInfo
 
 __all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
 
@@ -130,3 +131,21 @@ class Leaderboard(BaseModel):
         v["ascension"] = int(prop_map["ascension"]["val"] or 0)
         v["level"] = int(prop_map["level"]["val"] or 1)
         return v
+
+
+class StygianLeaderboard(BaseModel):
+    id: str = Field(alias="_id")
+    uid: str
+    is_cheating: bool = Field(alias="isCheating")
+    owner: LeaderboardOwner
+    player_info: PlayerInfo = Field(alias="playerInfo")
+    rank: int = Field(alias="index")
+
+    stygian_index: int = Field(alias="stygianIndex")
+    stygian_score: float = Field(alias="stygianScore")
+    stygian_seconds: int = Field(alias="stygianSeconds")
+    stygian_id: int | None = Field(default=None, alias="stygianId")
+
+    sus_level: int = Field(alias="susLevel")
+    name_card_url: str = Field(alias="nameCardLink")
+    profile_picture_url: str = Field(alias="profilePictureLink")

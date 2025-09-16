@@ -7,6 +7,17 @@ from pydantic import BaseModel, Field, field_validator
 
 class NameCardAsset(BaseModel):
     icon: str
+    pictures: list[str] = Field(alias="picPath")
+
+    @field_validator("icon", mode="after")
+    @classmethod
+    def __convert_icon(cls, v: str) -> str:
+        return f"https://enka.network/ui/{v}.png"
+
+    @field_validator("pictures", mode="after")
+    @classmethod
+    def __convert_pictures(cls, v: list[str]) -> list[str]:
+        return [f"https://enka.network/ui/{i}.png" for i in v]
 
 
 class NameCard(BaseModel):
@@ -20,8 +31,9 @@ class PlayerInfo(BaseModel):
     level: int
     signature: str | None = None
     region: str
+    name_card: NameCard = Field(alias="nameCardId")
 
-    world_level: int = Field(alias="worldLevel")
+    world_level: int | None = Field(default=None, alias="worldLevel")
     achievement_count: int = Field(alias="finishAchievementNum")
     """Number of achievements completed."""
 

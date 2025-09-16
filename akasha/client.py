@@ -7,8 +7,9 @@ from aiohttp_client_cache.session import CachedSession
 from loguru import logger
 
 from akasha.models.category import LeaderboardCategory
+from akasha.models.leaderboard import StygianLeaderboard
 from akasha.models.profile import Profile
-from akasha.paginators.leaderboard import LeaderboardPaginator
+from akasha.paginators.leaderboard import LeaderboardPaginator, StygianLeaderboardPaginator
 from akasha.paginators.profile import ProfilePaginator
 
 from .enums import Language, OrderBy, ProfileSortBy
@@ -348,4 +349,51 @@ class AkashaAPI:
             page_size=page_size,
             max_page=max_page,
             use_cache=use_cache,
+        )
+
+    async def _fetch_stygian_leaderboards(
+        self,
+        page: int,
+        page_size: int,
+        p: str,
+        version: str,
+        uids: Sequence[int] | None,
+        use_cache: bool,
+    ) -> list[StygianLeaderboard]:
+        data = await self._request(
+            "leaderboards/stygian",
+            params={
+                "size": page_size,
+                "page": page,
+                "sort": "stygianScore",
+                "order": -1,
+                "version": version,
+                "p": p,
+                "uids": f"[uid]{'[uid]'.join(map(str, uids))}" if uids else "",
+                "filter": "[susLevel]1[all]1" if uids else "",
+            },
+            use_cache=use_cache,
+        )
+        return [StygianLeaderboard(**lb) for lb in data]
+
+    def get_stygian_leaderboards(
+        self,
+        version: str,
+        *,
+        max_page: int = 1,
+        page_size: int = 20,
+        uids: Sequence[int] | None = None,
+        use_cache: bool = True,
+    ) -> StygianLeaderboardPaginator:
+        """Get a leaderboard paginator for a calculation.
+
+        Args:
+            version: The Stygian version.
+            max_page: The maximum number of pages to return.
+            page_size: The number of leaderboards to return per page.
+            uids: The UIDs of the players to get the leaderboard for.
+            use_cache: Whether to use the cache.
+        """
+        return StygianLeaderboardPaginator(
+            self._fetch_stygian_leaderboards, version, page_size, max_page, uids, use_cache
         )
