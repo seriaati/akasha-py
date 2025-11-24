@@ -95,11 +95,14 @@ class AkashaAPI:
             logger.debug(f"Requesting {url} with params {params}")
 
         if not use_cache:
-            async with self._session.disabled(), self._session.get(url, params=params) as response:
+            async with (
+                self._session.disabled(),
+                self._session.get(url, params=params, headers=self._headers) as response,
+            ):
                 response.raise_for_status()
                 data = await response.json()
         else:
-            async with self._session.get(url, params=params) as response:
+            async with self._session.get(url, params=params, headers=self._headers) as response:
                 response.raise_for_status()
                 data = await response.json()
 
