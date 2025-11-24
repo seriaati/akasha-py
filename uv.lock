@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 
 [[package]]
@@ -126,7 +126,7 @@ wheels = [
 
 [[package]]
 name = "akasha-py"
-version = "0.2.11"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
@@ -138,6 +138,12 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+test = [
+    { name = "pytest" },
+]
+tests = [
     { name = "pytest-asyncio" },
 ]
 
@@ -154,6 +160,8 @@ dev = [
     { name = "pytest", specifier = ">=8.3.3" },
     { name = "pytest-asyncio", specifier = ">=0.24.0" },
 ]
+test = [{ name = "pytest", specifier = ">=8.4.1" }]
+tests = [{ name = "pytest-asyncio", specifier = ">=1.0.0" }]
 
 [[package]]
 name = "annotated-types"
