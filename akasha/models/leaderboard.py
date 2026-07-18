@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, computed_field, field_validator, model_va
 from akasha.constants import PERCENT_STAT_TYPES
 from akasha.enums import CharaStatType, Element
 from akasha.models.profile import PlayerInfo
+from loguru import logger
 
 __all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
 
@@ -112,12 +113,17 @@ class Leaderboard(BaseModel):
     @field_validator("stats", mode="before")
     @classmethod
     def __unnest_stats_value(
-        cls, v: dict[str, dict[str, float]]
+        cls, value: dict[str, dict[str, float]]
     ) -> dict[CharaStatType, CharacterStat]:
-        return {
-            CharaStatType(k): CharacterStat(type=CharaStatType(k), value=v["value"])
-            for k, v in v.items()
-        }
+        result: dict[CharaStatType, CharacterStat] = {}
+        for k, v in value.items():
+            try:
+                stat_type = CharaStatType(k)
+            except ValueError:
+                logger.warning("Unknown stat type: {}, skipping.", k)
+                continue
+            result[stat_type] = CharacterStat(type=stat_type, value=v["value"])
+        return result
 
     @field_validator("element", mode="before")
     @classmethod
