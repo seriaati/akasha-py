@@ -83,6 +83,7 @@ class CharaStatType(StrEnum):
     """Character stat types."""
 
     MAX_HP = "maxHp"
+    BASE_ATK = "baseAtk"
     ATK = "atk"
     DEF = "def"
     ELEMENTAL_MASTERY = "elementalMastery"
