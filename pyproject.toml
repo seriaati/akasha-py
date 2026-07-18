@@ -35,3 +35,4 @@ module-name = "akasha"
 
 [dependency-groups]
 test = ["pytest>=8.4.1", "pytest-asyncio>=1.0.0"]
+dev = ["pytest>=8.4.1", "pytest-asyncio>=1.0.0"]

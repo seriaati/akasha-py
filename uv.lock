@@ -142,8 +142,6 @@ dev = [
 ]
 test = [
     { name = "pytest" },
-]
-tests = [
     { name = "pytest-asyncio" },
 ]
 
@@ -157,11 +155,13 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "pytest", specifier = ">=8.3.3" },
-    { name = "pytest-asyncio", specifier = ">=0.24.0" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-asyncio", specifier = ">=1.0.0" },
 ]
-test = [{ name = "pytest", specifier = ">=8.4.1" }]
-tests = [{ name = "pytest-asyncio", specifier = ">=1.0.0" }]
+test = [
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-asyncio", specifier = ">=1.0.0" },
+]
 
 [[package]]
 name = "annotated-types"
