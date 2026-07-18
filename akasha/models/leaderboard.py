@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import Any
 
+from loguru import logger
 from pydantic import BaseModel, Field, computed_field, field_validator, model_validator
 
 from akasha.constants import PERCENT_STAT_TYPES
 from akasha.enums import CharaStatType, Element
 from akasha.models.profile import PlayerInfo
-from loguru import logger
 
 __all__ = ("Leaderboard", "LeaderboardCalc", "LeaderboardOwner", "ProfilePicture")
 
