@@ -4,7 +4,7 @@
 
 akasha-py is an async API wrapper for [akasha.cv](https://akasha.cv/) written in Python.  
 akasha.cv is a Genshin Impact leaderboard website.  
-Developing something for Hoyoverse games? You might be interested in [other API wrappers](https://github.com/seriaati#api-wrappers) written by me.  
+Developing something for Hoyoverse games? You might be interested in [other API wrappers](https://projects.seria.moe/projects/#wrapper) written by me.  
 > Note: I am not the developer of akasha.cv.
 
 ## Important Notes
